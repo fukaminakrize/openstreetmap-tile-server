@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS compiler-common
+FROM ubuntu:24.10 AS compiler-common
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LANG C.UTF-8
 ENV LC_ALL C.UTF-8
@@ -46,7 +46,7 @@ ENV AUTOVACUUM=on
 ENV UPDATES=disabled
 ENV REPLICATION_URL=https://planet.openstreetmap.org/replication/hour/
 ENV MAX_INTERVAL_SECONDS=3600
-ENV PG_VERSION 15
+ENV PG_VERSION 16
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
@@ -96,7 +96,7 @@ RUN wget https://github.com/googlefonts/noto-emoji/blob/9a5261d871451f9b5183c934
 RUN wget https://github.com/stamen/terrain-classic/blob/master/fonts/unifont-Medium.ttf?raw=true --content-disposition -P /usr/share/fonts/
 
 # Install python libraries
-RUN pip3 install \
+RUN pip3 install --break-system-packages \
  requests \
  osmium \
  pyyaml
