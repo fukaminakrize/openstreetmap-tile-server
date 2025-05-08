@@ -111,7 +111,7 @@ if [ "$1" == "import" ]; then
     fi
 
     # Create indexes
-    if [ -z "${NAME_SQL}" ] || ! [ -f /data/style/${NAME_SQL} ]; then
+    if [ -z "${NAME_SQL:-}" ] || ! [ -f /data/style/${NAME_SQL} ]; then
         NAME_SQL="style.sql"
         cat /data/style/indexes.sql /data/style/functions.sql > $NAME_SQL
     fi
