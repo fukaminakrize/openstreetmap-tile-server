@@ -111,14 +111,18 @@ if [ "$1" == "import" ]; then
     fi
 
     # Create indexes
-    if [ -f /data/style/${NAME_SQL:-indexes.sql} ]; then
-        sudo -u postgres psql -d gis -f /data/style/${NAME_SQL:-indexes.sql}
+    if [ -z "${NAME_SQL}" ] || ! [ -f /data/style/${NAME_SQL} ]; then
+        NAME_SQL="style.sql"
+        cat /data/style/indexes.sql /data/style/functions.sql > $NAME_SQL
     fi
+    sudo -u postgres psql -d gis -f /data/style/${NAME_SQL}
 
     #Import external data
     chown -R renderer: /home/renderer/src/ /data/style/
     if [ -f /data/style/scripts/get-external-data.py ] && [ -f /data/style/external-data.yml ]; then
+        sudo -u postgres psql -d gis -c "ALTER USER renderer WITH SUPERUSER;"
         sudo -E -u renderer python3 /data/style/scripts/get-external-data.py -c /data/style/external-data.yml -D /data/style/data
+        sudo -u postgres psql -d gis -c "ALTER USER renderer WITH NOSUPERUSER;"
     fi
 
     # Register that data has changed for mod_tile caching purposes
